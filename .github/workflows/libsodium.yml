@@ -15,8 +15,8 @@ jobs:
   build:
     strategy:
       matrix:
-          arch: [x64, x86]
-    runs-on: windows-2022
+        arch: [arm64]
+    runs-on: ARM64
     steps:
       - name: Checkout winlib-builder
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: libsodium
-          repository: winlibs/libsodium
+          repository: php-win-ext/libsodium
           ref: ${{github.event.inputs.version}}
       - name: Compute virtual inputs
         id: virtuals
