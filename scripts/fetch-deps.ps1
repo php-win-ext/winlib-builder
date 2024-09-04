@@ -30,6 +30,48 @@ if (-not $deps) {
     exit
 }
 
+if ($arch -eq "arm64")
+{
+    $headers = @{
+        Authorization = "Bearer $( $Env:API_TOKEN )"
+        Accept = "text/plain"
+    }
+    $needs = @{ }
+    $response = Invoke-WebRequest "https://phpext.phptools.online/api/downloadable/search/-$vs-$arch.zip" -Method Get -Headers $headers
+    foreach ($line in $response.Content -split "`n")
+    {
+        foreach ($dep in $deps)
+        {
+            if ($line -match "$dep-(.+)-$vs-$arch.zip")
+            {
+                $needs.$dep = $matches[1]
+            }
+        }
+    }
+
+    New-Item "deps" -ItemType "directory"
+
+    $baseurl = "https://phpext.phptools.online/api/downloadable/download"
+    $headers = @{
+        Authorization = "Bearer $( $Env:API_TOKEN )"
+    }
+    foreach ($dep in $needs.GetEnumerator())
+    {
+        Write-Output "Fetching $( $dep.Name )-$( $dep.Value )"
+        $temp = New-TemporaryFile | Rename-Item -NewName { $_.Name + ".zip" } -PassThru
+        $url = "$baseurl/$( $dep.Name )-$( $dep.Value )-$vs-$arch.zip"
+        Invoke-WebRequest $url -OutFile $temp -Method Get -Headers $headers
+        Expand-Archive $temp -DestinationPath "deps"
+    }
+    $deps = $deps | Where-Object {$needs.Keys -NotContains $_}
+
+    if ($deps.Count -gt 0) {
+        throw "dependencies not found: $deps"
+    }
+    exit
+}
+
+
 $needs = @{}
 $response = Invoke-WebRequest "https://downloads.php.net/~windows/php-sdk/deps/series/packages-$version-$vs-$arch-$stability.txt"
 foreach ($line in $response.Content -split "`r`n") {
