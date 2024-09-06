@@ -37,7 +37,7 @@ if ($arch -eq "arm64")
         Accept = "text/plain"
     }
     $needs = @{ }
-    $response = Invoke-WebRequest "https://phpext.phptools.online/api/downloadable/search/-$vs-$arch.zip" -Method Get -Headers $headers
+    $response = Invoke-WebRequest "https:/$($Env:API_HOSTNAME)/api/downloadable/search/-$vs-$arch.zip" -Method Get -Headers $headers
     foreach ($line in $response.Content -split "`n")
     {
         foreach ($dep in $deps)
@@ -51,7 +51,7 @@ if ($arch -eq "arm64")
 
     New-Item "deps" -ItemType "directory"
 
-    $baseurl = "https://phpext.phptools.online/api/downloadable/download"
+    $baseurl = "https://$()$Env:API_HOSTNAME/api/downloadable/download"
     $headers = @{
         Authorization = "Bearer $( $Env:API_TOKEN )"
     }
