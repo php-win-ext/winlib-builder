@@ -51,7 +51,7 @@ if ($arch -eq "arm64")
 
     New-Item "deps" -ItemType "directory"
 
-    $baseurl = "https://$()$Env:API_HOSTNAME/api/downloadable/download"
+    $baseurl = "https://$($Env:API_HOSTNAME)/api/downloadable/download"
     $headers = @{
         Authorization = "Bearer $( $Env:API_TOKEN )"
     }
