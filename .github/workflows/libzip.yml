@@ -36,6 +36,9 @@ jobs:
         id: virtuals
         run: powershell winlib-builder/scripts/compute-virtuals -version ${{github.event.inputs.php}} -arch ${{matrix.arch}}
       - name: Fetch dependencies
+        env:
+          API_TOKEN: ${{secrets.API_TOKEN}}
+          API_HOSTNAME: ${{secrets.API_HOSTNAME}}
         run: powershell winlib-builder/scripts/fetch-deps -lib libzip -version ${{github.event.inputs.php}} -vs ${{steps.virtuals.outputs.vs}} -arch ${{matrix.arch}} -stability ${{github.event.inputs.stability}}
       - name: Configure libzip for PHP < 8.0
         if: github.event.inputs.php < 8.0
