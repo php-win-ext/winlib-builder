@@ -19,8 +19,8 @@ jobs:
   build:
     strategy:
       matrix:
-          arch: [x64, x86]
-    runs-on: windows-2022
+          arch: [arm64]
+    runs-on: ARM64
     steps:
       - name: Checkout winlib-builder
         uses: actions/checkout@v4
@@ -45,6 +45,9 @@ jobs:
           if "${{matrix.arch}}" == "x64" (
               set release_out=x64\Release
               set libintl_lib_out=libintl_dll\x64\Release\libintl.lib
+          ) if "${{matrix.arch}}" == "arm64" (
+              set release_out=arm64\Release
+              set libintl_lib_out=libintl_dll\arm64\Release\libintl.lib
           ) else (
               set release_out=Release
               set libintl_lib_out=Release\libintl.lib
