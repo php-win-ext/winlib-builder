@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: libxpm
-          repository: winlibs/libxpm
+          repository: php-win-ext/libxpm
           ref: ${{github.event.inputs.version}}
       - name: Compute virtual inputs
         id: virtuals
