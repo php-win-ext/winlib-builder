@@ -37,6 +37,16 @@ jobs:
         run: powershell winlib-builder/scripts/compute-virtuals -version ${{github.event.inputs.php}} -arch ${{matrix.arch}}
       - name: Setup msbuild
         uses: microsoft/setup-msbuild@v2
+
+      - name: Restore from cache and install vcpkg
+        uses: lukka/run-vcpkg@v7
+        with:
+          setupOnly: false
+          vcpkgDirectory: '${{ github.workspace }}/gettext/vcpkg'
+          vcpkgGitCommitId: '8eb57355a4ffb410a2e94c07b4dca2dffbee8e50'
+          vcpkgTriplet: ${{ matrix.arch }}-windows
+          vcpkgArguments: 'gettext'
+          additionalCachedPaths: '${{ github.workspace }}/build/vcpkg_installed'
       - name: Build gettext
         run: cd gettext\MSVC${{steps.virtuals.outputs.vsnum}} && msbuild gettext.sln /p:Configuration=Release /p:Platform=${{steps.virtuals.outputs.msarch}} /p:PlatformToolset=${{steps.virtuals.outputs.msts}} /p:WindowsTargetPlatformVersion=${{steps.virtuals.outputs.winsdk}}
       - name: Install gettext
