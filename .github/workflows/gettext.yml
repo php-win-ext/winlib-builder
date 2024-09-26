@@ -32,11 +32,6 @@ jobs:
           path: gettext
           repository: php-win-ext/gettext
           ref: ${{github.event.inputs.version}}
-      - name: Compute virtual inputs
-        id: virtuals
-        run: powershell winlib-builder/scripts/compute-virtuals -version ${{github.event.inputs.php}} -arch ${{matrix.arch}}
-      - name: Setup msbuild
-        uses: microsoft/setup-msbuild@v2
 
       - name: Restore from cache and install vcpkg
         uses: lukka/run-vcpkg@v7
@@ -47,6 +42,12 @@ jobs:
           vcpkgTriplet: ${{ matrix.arch }}-windows
           vcpkgArguments: 'gettext'
           additionalCachedPaths: '${{ github.workspace }}/build/vcpkg_installed'
+
+      - name: Compute virtual inputs
+        id: virtuals
+        run: powershell winlib-builder/scripts/compute-virtuals -version ${{github.event.inputs.php}} -arch ${{matrix.arch}}
+      - name: Setup msbuild
+        uses: microsoft/setup-msbuild@v2
       - name: Build gettext
         run: cd gettext\MSVC${{steps.virtuals.outputs.vsnum}} && msbuild gettext.sln /p:Configuration=Release /p:Platform=${{steps.virtuals.outputs.msarch}} /p:PlatformToolset=${{steps.virtuals.outputs.msts}} /p:WindowsTargetPlatformVersion=${{steps.virtuals.outputs.winsdk}}
       - name: Install gettext
