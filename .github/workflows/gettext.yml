@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
           arch: [arm64]
-    runs-on: ARM64
+    runs-on: [self-hosted, ARM64]
     steps:
       - name: Checkout winlib-builder
         uses: actions/checkout@v4
